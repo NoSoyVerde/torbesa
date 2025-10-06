@@ -23,8 +23,9 @@
         <div class="col-md-8 text-center">
             <h1 class="display-4">Welcome to the Math Game!</h1>
             <p class="lead">Test your math skills and climb the leaderboard!</p>
-            <a href="MathGameServlet" class="btn btn-success btn-lg m-4">Start Playing</a>
-            <a href="MathScoreServlet" class="btn btn-warning btn-lg m-4">Top Scores</a>
+            <a href="${pageContext.request.contextPath}/math/mathgame" class="btn btn-success btn-lg m-4">Start Playing</a>
+            <a href="${pageContext.request.contextPath}/math/mathscores" class="btn btn-warning btn-lg m-4">Top Scores</a>
+
         </div>
     </div>
     <div class="row mt-5">

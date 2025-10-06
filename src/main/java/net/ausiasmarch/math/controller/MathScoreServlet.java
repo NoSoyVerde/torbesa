@@ -13,45 +13,25 @@ import net.ausiasmarch.math.service.MathScoreService;
 @WebServlet("/math/mathscores")
 public class MathScoreServlet extends HttpServlet {
 
-    private final MathScoreService scoreService;
-
-    public MathScoreServlet() {
-        this.scoreService = new MathScoreService();
-    }
-
-    // Constructor para inyección de tests
-    public MathScoreServlet(MathScoreService scoreService) {
-        this.scoreService = scoreService;
-    }
+    private final MathScoreService scoreService = new MathScoreService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        if (session.getAttribute("sessionUser") == null) {
+            try { response.sendRedirect(request.getContextPath() + "/index.jsp"); } catch (IOException e) { e.printStackTrace(); }
+            return;
+        }
+
         try {
-            List<MathScoreDTO> highScoresList = scoreService.getHighScores();
-            request.setAttribute("highScores", highScoresList);
+            List<MathScoreDTO> highScores = scoreService.getHighScores();
+            request.setAttribute("highScores", highScores);
             RequestDispatcher dispatcher = request.getRequestDispatcher("mathhighscores.jsp");
             dispatcher.forward(request, response);
-        } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-            request.setAttribute("errorMessage", "Database error");
-            forwardError(request, response);
-        } catch (ServletException | IOException e) {
-            System.err.println("Internal error: " + e.getMessage());
-            request.setAttribute("errorMessage", "Internal error");
-            forwardError(request, response);
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            request.setAttribute("errorMessage", e.getMessage());
-            forwardError(request, response);
-        }
-    }
-
-    private void forwardError(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("../shared/error.jsp");
-            dispatcher.forward(request, response);
-        } catch (ServletException | IOException e1) {
-            System.err.println("Error forwarding to error page: " + e1.getMessage());
+        } catch (SQLException | ServletException | IOException e) {
+            e.printStackTrace();
+            try { request.setAttribute("errorMessage", e.getMessage()); request.getRequestDispatcher("../shared/error.jsp").forward(request, response); } 
+            catch (ServletException | IOException ex) { ex.printStackTrace(); }
         }
     }
 }

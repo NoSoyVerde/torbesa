@@ -26,7 +26,14 @@
                     <div class="card-body">
                         <h2 class="card-title text-center mb-4">Solve the Math Challenge!</h2>
 
-                        <form method="post" action="MathGameServlet">
+                        <!-- Mostrar mensaje de resultado si existe -->
+                        <c:if test="${not empty message}">
+                            <div class="alert ${message eq '✅ Correcto!' ? 'alert-success' : 'alert-danger'} text-center">
+                                ${message}
+                            </div>
+                        </c:if>
+
+                        <form method="post" action="${pageContext.request.contextPath}/math/mathgame>
                             <div class="mb-4 text-center">
                                 <h4 class="text-primary">${operation}</h4>
                             </div>
@@ -43,20 +50,24 @@
                                 </div>
                             </div>
 
+                            <!-- Campos ocultos para enviar los números a doPost -->
+                            <input type="hidden" name="a" value="${a}">
+                            <input type="hidden" name="b" value="${b}">
+
                             <button type="submit" class="btn btn-success w-100">Submit Answer</button>
                         </form>
 
                         <div class="mt-4 text-center">
-                            <span class="fw-bold">Score:</span>
+                            <span class="fw-bold">Your Score:</span>
                             <span class="badge bg-primary">${score}</span>
                         </div>
 
                         <div class="mt-3 text-center">
-                            <a href="MathScoreServlet" class="btn btn-warning w-50">View High Scores</a>
+                            <a href="${pageContext.request.contextPath}/math/mathscores" class="btn btn-warning w-50">View High Scores</a>
                         </div>
 
                         <div class="mt-2 text-center">
-                            <form method="get" action="../shared/LogoutServlet">
+                            <form method="get" action="${pageContext.request.contextPath}/shared/LogoutServlet">
                                 <button type="submit" class="btn btn-outline-danger w-50">Logout</button>
                             </form>
                         </div>

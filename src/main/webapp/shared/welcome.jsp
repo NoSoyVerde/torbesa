@@ -83,7 +83,7 @@
                                 </div>
                                 <h5 class="card-title text-warning mb-3">Math Challenge</h5>
                                 <p class="card-text text-muted mb-4">Sharpen your math skills with fun arithmetic challenges and number puzzles.</p>
-                                <a href="${pageContext.request.contextPath}/math/mathlanding.jsp" class="btn btn-warning btn-lg w-100"><i class="bi bi-play-fill"></i> Play Now</a>
+                                <a href="${pageContext.request.contextPath}/math/mathgame" class="btn btn-warning btn-lg w-100"><i class="bi bi-play-fill"></i> Play Now</a>
                              
                             </div>
                         </div>

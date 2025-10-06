@@ -20,7 +20,7 @@ public class MathScoreDAO {
         }
 
         MathScoreDTO score = null;
-        String sql = "SELECT * FROM math_score WHERE user_id = ? ORDER BY timestamp DESC";
+        String sql = "SELECT s.*, u.username FROM math_score s JOIN user u ON s.user_id = u.id WHERE s.user_id = ? ORDER BY s.timestamp DESC";
         try (PreparedStatement stmt = oConnection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -28,6 +28,7 @@ public class MathScoreDAO {
                     score = new MathScoreDTO(
                             rs.getInt("id"),
                             rs.getInt("user_id"),
+                            rs.getString("username"),
                             rs.getInt("score"),
                             rs.getInt("tries"),
                             rs.getTimestamp("timestamp").toLocalDateTime()
@@ -43,33 +44,29 @@ public class MathScoreDAO {
         try (PreparedStatement stmt = oConnection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("total");
-                }
+                if (rs.next()) return rs.getInt("total");
             }
         }
         return 0;
     }
 
     public void sanitize() throws SQLException {
-        String sql = "DELETE s1 FROM math_score s1 " +
-                     "INNER JOIN math_score s2 ON s1.user_id = s2.user_id " +
-                     "WHERE s1.timestamp < s2.timestamp";
+        String sql = "DELETE s1 FROM math_score s1 INNER JOIN math_score s2 ON s1.user_id = s2.user_id WHERE s1.timestamp < s2.timestamp";
         try (PreparedStatement stmt = oConnection.prepareStatement(sql)) {
-            int deletedRows = stmt.executeUpdate();
-            System.out.println("Sanitized " + deletedRows + " duplicate math scores");
+            stmt.executeUpdate();
         }
     }
 
     public List<MathScoreDTO> getTop10() throws SQLException {
         List<MathScoreDTO> scores = new ArrayList<>();
-        String sql = "SELECT * FROM math_score ORDER BY score DESC, timestamp DESC LIMIT 10";
+        String sql = "SELECT s.*, u.username FROM math_score s JOIN user u ON s.user_id = u.id ORDER BY s.score DESC, s.timestamp DESC LIMIT 10";
         try (Statement stmt = oConnection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 scores.add(new MathScoreDTO(
                         rs.getInt("id"),
                         rs.getInt("user_id"),
+                        rs.getString("username"),
                         rs.getInt("score"),
                         rs.getInt("tries"),
                         rs.getTimestamp("timestamp").toLocalDateTime()
