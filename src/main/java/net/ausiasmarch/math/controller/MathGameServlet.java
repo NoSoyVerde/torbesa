@@ -1,0 +1,107 @@
+package net.ausiasmarch.math.controller;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import net.ausiasmarch.math.dao.MathScoreDAO;
+import net.ausiasmarch.math.model.MathScoreDTO;
+import net.ausiasmarch.math.service.MathScoreService;
+import net.ausiasmarch.shared.connection.HikariPool;
+import net.ausiasmarch.shared.model.UserBean;
+
+@WebServlet("/math/MathGameServlet")
+public class MathGameServlet extends HttpServlet {
+
+    private final MathScoreService scoreService = new MathScoreService();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserBean user = (UserBean) session.getAttribute("sessionUser");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/shared/login.jsp");
+            return;
+        }
+
+        // Generar pregunta de matemáticas
+        int a = (int) (Math.random() * 50) + 1;
+        int b = (int) (Math.random() * 50) + 1;
+        int correctAnswer = a + b;
+
+        ArrayList<Integer> options = new ArrayList<>();
+        options.add(correctAnswer);
+        Random rand = new Random();
+
+        // Generar 3 distractores
+        while (options.size() < 4) {
+            int option = correctAnswer + rand.nextInt(21) - 10; // +-10
+            if (option != correctAnswer && !options.contains(option)) {
+                options.add(option);
+            }
+        }
+
+        // Mezclar opciones
+        java.util.Collections.shuffle(options);
+
+        request.setAttribute("a", a);
+        request.setAttribute("b", b);
+        request.setAttribute("options", options);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("mathgame.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserBean user = (UserBean) session.getAttribute("sessionUser");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/shared/login.jsp");
+            return;
+        }
+
+        try {
+            int a = Integer.parseInt(request.getParameter("a"));
+            int b = Integer.parseInt(request.getParameter("b"));
+            int guess = Integer.parseInt(request.getParameter("answer"));
+            int correctAnswer = a + b;
+
+            boolean isCorrect = (guess == correctAnswer);
+
+            scoreService.set(user.getId(), isCorrect);
+
+            request.setAttribute("message", isCorrect ? "Correct! Well done." : "Incorrect. Try again!");
+            request.setAttribute("a", a);
+            request.setAttribute("b", b);
+            request.setAttribute("guess", guess);
+            request.setAttribute("correctAnswer", correctAnswer);
+
+            try (Connection oConnection = HikariPool.getConnection()) {
+                MathScoreDAO dao = new MathScoreDAO(oConnection);
+                MathScoreDTO userScore = dao.get(user.getId());
+                request.setAttribute("userScore", userScore);
+
+                List<MathScoreDTO> highScores = dao.getTop10();
+                request.setAttribute("highScores", highScores);
+            }
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("mathscores.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (NumberFormatException | SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Internal error: " + e.getMessage());
+            RequestDispatcher dispatcher = request.getRequestDispatcher("../shared/error.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+}
