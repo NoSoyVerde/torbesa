@@ -100,30 +100,27 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                 </div>
               </div>
 
-              <!-- Math Challenge -->
-              <div class="col-md-6 col-lg-4">
-                <div class="card game-card shadow-sm border-0 h-100">
-                  <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                      <i
-                        class="bi bi-calculator text-warning"
-                        style="font-size: 3rem"
-                      ></i>
-                    </div>
-                    <h5 class="card-title text-warning mb-3">Math Challenge</h5>
-                    <p class="card-text text-muted mb-4">
-                      Sharpen your math skills with fun arithmetic challenges
-                      and number puzzles.
-                    </p>
-                    <a
-                      href="${pageContext.request.contextPath}/math/mathgame"
-                      class="btn btn-warning btn-lg w-100"
-                    >
-                      <i class="bi bi-play-fill"></i> Play Now
-                    </a>
-                  </div>
-                </div>
-              </div>
+<!-- Math Challenge Game -->
+<div class="col-md-6 col-lg-4">
+    <div class="card game-card shadow-sm border-0 h-100">
+        <div class="card-body text-center p-4">
+            <div class="mb-3">
+                <i class="bi bi-calculator text-warning" style="font-size: 3rem"></i>
+            </div>
+            <h5 class="card-title text-warning mb-3">Math Challenge</h5>
+            <p class="card-text text-muted mb-4">
+                Sharpen your math skills with fun arithmetic challenges and number puzzles.
+            </p>
+            <p class="card-text text-muted mb-4">
+                By Héctor Fernández
+            </p>
+            <a href="${pageContext.request.contextPath}/math/mathlanding.jsp" class="btn btn-warning btn-lg w-100">
+                <i class="bi bi-play-fill"></i> Play Now
+            </a>
+        </div>
+    </div>
+</div>
+
 
               <!-- Coming Soon Games -->
               <c:forEach

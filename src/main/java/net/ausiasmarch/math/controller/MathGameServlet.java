@@ -28,7 +28,6 @@ public class MathGameServlet extends HttpServlet {
             return;
         }
 
-        // Generar operación matemática (suma)
         int a = (int) (Math.random() * 50) + 1;
         int b = (int) (Math.random() * 50) + 1;
         int correctAnswer = a + b;
@@ -77,10 +76,8 @@ public class MathGameServlet extends HttpServlet {
 
             boolean isCorrect = (guess == correctAnswer);
 
-            // Guardar resultado en la base de datos
             scoreService.set(user.getId(), isCorrect);
 
-            // Obtener el score actualizado
             MathScoreDTO userScore = null;
             try {
                 userScore = scoreService.getHighScores().stream()
@@ -90,7 +87,6 @@ public class MathGameServlet extends HttpServlet {
                 ex.printStackTrace();
             }
 
-            // Enviar atributos al JSP
             request.setAttribute("message", isCorrect ? "✅ Correct!" : "❌ Incorrect");
             request.setAttribute("a", a);
             request.setAttribute("b", b);

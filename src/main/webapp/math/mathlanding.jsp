@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<jsp:include page="../shared/menu.jsp" />
+<jsp:include page="${pageContext.request.contextPath}/shared/menu.jsp" />
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -25,28 +25,11 @@
             <p class="lead">Test your math skills and climb the leaderboard!</p>
             <a href="${pageContext.request.contextPath}/math/mathgame" class="btn btn-success btn-lg m-4">Start Playing</a>
             <a href="${pageContext.request.contextPath}/math/mathscores" class="btn btn-warning btn-lg m-4">Top Scores</a>
-
-        </div>
-    </div>
-    <div class="row mt-5">
-        <div class="col-md-8 offset-md-2">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h5 class="card-title">How to Play</h5>
-                    <ul class="list-group list-group-flush text-start">
-                        <li class="list-group-item">Log in with your username and password.</li>
-                        <li class="list-group-item">Solve math problems presented to you.</li>
-                        <li class="list-group-item">Earn points for correct answers.</li>
-                        <li class="list-group-item">View high scores and challenge yourself!</li>
-                        <li class="list-group-item">Use this code to learn Java, Servlets, JSP, JSTL, sessions, and more!</li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
-<jsp:include page="../shared/footer.jsp" />
+<jsp:include page="${pageContext.request.contextPath}/shared/footer.jsp" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
